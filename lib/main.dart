@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:async';
 import 'user_profile_page.dart';
@@ -24,7 +24,7 @@ class SajuApp extends StatelessWidget {
           brightness: Brightness.light,
         ),
         useMaterial3: true,
-        textTheme: GoogleFonts.interTextTheme(),
+        textTheme: null,
         scaffoldBackgroundColor: Colors.white,
       ),
       home: const MainHomePage(),
@@ -225,7 +225,7 @@ class _MainHomePageState extends State<MainHomePage>
                         const SizedBox(width: 4),
                         Text(
                           _selectedUser!['name'],
-                          style: GoogleFonts.inter(
+                          style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFFE91E63),
@@ -269,7 +269,7 @@ class _MainHomePageState extends State<MainHomePage>
                         const SizedBox(width: 4),
                         Text(
                           _selectedPet!['name'],
-                          style: GoogleFonts.inter(
+                          style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFFE91E63),
@@ -287,8 +287,7 @@ class _MainHomePageState extends State<MainHomePage>
         Padding(
           padding: const EdgeInsets.only(left: 16, top: 2, bottom: 2),
           child: Text('라이프코치',
-              style:
-                  GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 24)),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
         ),
         // TabBar (truly flush left using TabBarTheme)
         Theme(
@@ -305,16 +304,13 @@ class _MainHomePageState extends State<MainHomePage>
               indicatorColor: const Color(0xFFE91E63),
               labelColor: Colors.black,
               unselectedLabelColor: Colors.grey.shade400,
-              labelStyle:
-                  GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16),
-              unselectedLabelStyle: GoogleFonts.inter(
-                  fontWeight: FontWeight.normal, fontSize: 16),
+              labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              unselectedLabelStyle:
+                  TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
               tabs: tabs.map((t) => Tab(text: t)).toList(),
             ),
           ),
         ),
-        // Notice Carousel (below tab, rendered once)
-        _buildNoticeCarousel(),
         // TabBarView (only the list changes)
         Expanded(
           child: TabBarView(
@@ -323,6 +319,7 @@ class _MainHomePageState extends State<MainHomePage>
               SingleChildScrollView(
                 child: Column(
                   children: [
+                    _buildNoticeCarousel(),
                     _buildMenuGrid(humanMenus),
                     _buildEmotionCurve(),
                   ],
@@ -331,6 +328,7 @@ class _MainHomePageState extends State<MainHomePage>
               SingleChildScrollView(
                 child: Column(
                   children: [
+                    _buildNoticeCarousel(),
                     _buildMenuGrid(dogMenus),
                     _buildEmotionCurve(),
                   ],
@@ -350,8 +348,7 @@ class _MainHomePageState extends State<MainHomePage>
         Padding(
           padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
           child: Text('궁합',
-              style:
-                  GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 24)),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
         ),
         Expanded(
           child: Center(
@@ -362,12 +359,12 @@ class _MainHomePageState extends State<MainHomePage>
                     size: 64, color: Colors.grey.shade400),
                 const SizedBox(height: 16),
                 Text('궁합 서비스 준비 중',
-                    style: GoogleFonts.inter(
-                        fontSize: 18, color: Colors.grey.shade600)),
+                    style:
+                        TextStyle(fontSize: 18, color: Colors.grey.shade600)),
                 const SizedBox(height: 8),
                 Text('내궁합, 개궁합 서비스가 곧 제공됩니다',
-                    style: GoogleFonts.inter(
-                        fontSize: 14, color: Colors.grey.shade500)),
+                    style:
+                        TextStyle(fontSize: 14, color: Colors.grey.shade500)),
               ],
             ),
           ),
@@ -383,8 +380,7 @@ class _MainHomePageState extends State<MainHomePage>
         Padding(
           padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
           child: Text('타로카드',
-              style:
-                  GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 24)),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
         ),
         Expanded(
           child: Center(
@@ -394,12 +390,12 @@ class _MainHomePageState extends State<MainHomePage>
                 Icon(Icons.style, size: 64, color: Colors.grey.shade400),
                 const SizedBox(height: 16),
                 Text('타로카드 서비스 준비 중',
-                    style: GoogleFonts.inter(
-                        fontSize: 18, color: Colors.grey.shade600)),
+                    style:
+                        TextStyle(fontSize: 18, color: Colors.grey.shade600)),
                 const SizedBox(height: 8),
                 Text('타로카드 디자인과 액션이 준비 중입니다',
-                    style: GoogleFonts.inter(
-                        fontSize: 14, color: Colors.grey.shade500)),
+                    style:
+                        TextStyle(fontSize: 14, color: Colors.grey.shade500)),
               ],
             ),
           ),
@@ -415,8 +411,7 @@ class _MainHomePageState extends State<MainHomePage>
         Padding(
           padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
           child: Text('설정',
-              style:
-                  GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 24)),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
         ),
         Expanded(
           child: Center(
@@ -426,12 +421,12 @@ class _MainHomePageState extends State<MainHomePage>
                 Icon(Icons.settings, size: 64, color: Colors.grey.shade400),
                 const SizedBox(height: 16),
                 Text('설정 서비스 준비 중',
-                    style: GoogleFonts.inter(
-                        fontSize: 18, color: Colors.grey.shade600)),
+                    style:
+                        TextStyle(fontSize: 18, color: Colors.grey.shade600)),
                 const SizedBox(height: 8),
                 Text('사용자 정보, 애견 정보 설정이 준비 중입니다',
-                    style: GoogleFonts.inter(
-                        fontSize: 14, color: Colors.grey.shade500)),
+                    style:
+                        TextStyle(fontSize: 14, color: Colors.grey.shade500)),
               ],
             ),
           ),
@@ -444,7 +439,7 @@ class _MainHomePageState extends State<MainHomePage>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: SizedBox(
-        height: 160,
+        height: 107,
         child: Stack(
           children: [
             NotificationListener<ScrollNotification>(
@@ -473,7 +468,7 @@ class _MainHomePageState extends State<MainHomePage>
                         Image.network(
                           noticeImages[idx],
                           width: double.infinity,
-                          height: 160,
+                          height: 107,
                           fit: BoxFit.cover,
                         ),
                         // 텍스트 오버레이
@@ -493,7 +488,7 @@ class _MainHomePageState extends State<MainHomePage>
                                 ),
                                 child: Text(
                                   noticeTexts[idx]['badge']!,
-                                  style: GoogleFonts.inter(
+                                  style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
@@ -503,7 +498,7 @@ class _MainHomePageState extends State<MainHomePage>
                               const SizedBox(height: 8),
                               Text(
                                 noticeTexts[idx]['title']!,
-                                style: GoogleFonts.inter(
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -519,7 +514,7 @@ class _MainHomePageState extends State<MainHomePage>
                               const SizedBox(height: 4),
                               Text(
                                 noticeTexts[idx]['subtitle']!,
-                                style: GoogleFonts.inter(
+                                style: TextStyle(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 12,
                                   shadows: [
@@ -626,11 +621,11 @@ class _MainHomePageState extends State<MainHomePage>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(menu['title'],
-                    style: GoogleFonts.inter(
-                        fontWeight: FontWeight.w600, fontSize: 14)),
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                 const SizedBox(height: 2),
                 Text(menu['subtitle'],
-                    style: GoogleFonts.inter(fontSize: 11, color: Colors.grey),
+                    style: TextStyle(fontSize: 11, color: Colors.grey),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis),
               ],
@@ -666,7 +661,7 @@ class _MainHomePageState extends State<MainHomePage>
               const SizedBox(width: 8),
               Text(
                 '오늘의 감정 곡선',
-                style: GoogleFonts.inter(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
@@ -721,7 +716,7 @@ class _MainHomePageState extends State<MainHomePage>
                                 true) {
                           return Text(
                             emotionData[value.toInt()]['label'] ?? '',
-                            style: GoogleFonts.inter(
+                            style: TextStyle(
                               fontSize: 9,
                               color: Colors.grey.shade500,
                               fontWeight: FontWeight.w400,
@@ -869,7 +864,7 @@ class _MainHomePageState extends State<MainHomePage>
         const SizedBox(width: 4),
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: TextStyle(
             fontSize: 12,
             color: Colors.grey.shade700,
           ),

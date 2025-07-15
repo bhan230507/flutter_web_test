@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 
 class PetProfilePage extends StatefulWidget {
   const PetProfilePage({super.key});
@@ -53,7 +53,7 @@ class _PetProfilePageState extends State<PetProfilePage> {
         ),
         title: Text(
           '애견 정보',
-          style: GoogleFonts.inter(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
             color: Colors.black,
@@ -73,7 +73,7 @@ class _PetProfilePageState extends State<PetProfilePage> {
                   const SizedBox(width: 8),
                   Text(
                     '등록된 애견',
-                    style: GoogleFonts.inter(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -112,11 +112,11 @@ class _PetProfilePageState extends State<PetProfilePage> {
                       ),
                       title: Text(
                         pet['name'],
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                        style: TextStyle(fontWeight: FontWeight.w600),
                       ),
                       subtitle: Text(
                         '${pet['type']} • ${pet['breed']} • ${pet['birthDate']} • ${pet['isMale'] ? '수컷' : '암컷'}${pet['mbti'] != null ? ' • ${pet['mbti']}' : ''}${pet['bloodType'] != null ? ' • ${pet['bloodType']}' : ''}',
-                        style: GoogleFonts.inter(
+                        style: TextStyle(
                             fontSize: 12, color: Colors.grey.shade600),
                       ),
                       trailing: Row(
@@ -539,7 +539,7 @@ class _AddPetPageState extends State<AddPetPage> {
         ),
         title: Text(
           widget.editingPet != null ? '애견 수정' : '새 애견 추가',
-          style: GoogleFonts.inter(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
             color: Colors.black,
@@ -560,10 +560,11 @@ class _AddPetPageState extends State<AddPetPage> {
                     controller: _nameController,
                     decoration: InputDecoration(
                       labelText: '애견 이름',
+                      labelStyle: TextStyle(fontSize: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      prefixIcon: Icon(Icons.pets),
+                      // prefixIcon: Icon(Icons.pets),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -603,7 +604,7 @@ class _AddPetPageState extends State<AddPetPage> {
                           ),
                           child: Text(
                             '수컷',
-                            style: GoogleFonts.inter(
+                            style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color:
@@ -632,7 +633,7 @@ class _AddPetPageState extends State<AddPetPage> {
                           ),
                           child: Text(
                             '암컷',
-                            style: GoogleFonts.inter(
+                            style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color: !_isMale
@@ -654,16 +655,20 @@ class _AddPetPageState extends State<AddPetPage> {
               children: [
                 // 생년월일
                 Expanded(
-                  flex: 2,
+                  flex: 1,
                   child: TextFormField(
                     controller: _dateController,
                     decoration: InputDecoration(
                       labelText: '생년월일',
+                      labelStyle: TextStyle(fontSize: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      prefixIcon: Icon(Icons.calendar_today, size: 20),
+                      // prefixIcon: Icon(Icons.calendar_today, size: 18),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                     ),
+                    style: TextStyle(fontSize: 12),
                     onChanged: (value) {
                       _formatDate(value);
                     },
@@ -686,15 +691,15 @@ class _AddPetPageState extends State<AddPetPage> {
                     controller: _timeController,
                     decoration: InputDecoration(
                       labelText: '시간(옵션)',
-                      labelStyle: GoogleFonts.inter(fontSize: 12),
+                      labelStyle: TextStyle(fontSize: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      prefixIcon: Icon(Icons.access_time, size: 18),
+                      // prefixIcon: Icon(Icons.access_time, size: 16),
                       contentPadding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                          EdgeInsets.symmetric(horizontal: 6, vertical: 10),
                     ),
-                    style: GoogleFonts.inter(fontSize: 12),
+                    style: TextStyle(fontSize: 12),
                     onChanged: (value) {
                       _formatTime(value);
                     },
@@ -738,7 +743,7 @@ class _AddPetPageState extends State<AddPetPage> {
                           ),
                           child: Text(
                             '양력',
-                            style: GoogleFonts.inter(
+                            style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color: !_isLunar
@@ -768,7 +773,7 @@ class _AddPetPageState extends State<AddPetPage> {
                           ),
                           child: Text(
                             '음력',
-                            style: GoogleFonts.inter(
+                            style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color: _isLunar
@@ -786,28 +791,73 @@ class _AddPetPageState extends State<AddPetPage> {
             const SizedBox(height: 16),
 
             // 종류 선택 (강아지/고양이)
-            DropdownButtonFormField<String>(
-              value: _selectedType,
-              decoration: InputDecoration(
-                labelText: '종류',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                prefixIcon: Icon(Icons.pets),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(12),
               ),
-              items: ['강아지', '고양이'].map((String type) {
-                return DropdownMenuItem<String>(
-                  value: type,
-                  child: Text(type),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedType = newValue!;
-                  _selectedBreed = null; // 품종 초기화
-                  _selectedBloodType = null; // 혈액형 초기화 (종류가 바뀌면 혈액형도 바뀜)
-                });
-              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.pets, color: Colors.grey.shade600),
+                      const SizedBox(width: 12),
+                      Text(
+                        '종류 선택',
+                        style: TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: ['강아지', '고양이'].map((String type) {
+                      final isSelected = _selectedType == type;
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedType = type;
+                              _selectedBreed = null; // 품종 초기화
+                              _selectedBloodType = null; // 혈액형 초기화
+                            });
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? const Color(0xFFE91E63).withOpacity(0.1)
+                                  : Colors.grey.shade50,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: isSelected
+                                    ? const Color(0xFFE91E63)
+                                    : Colors.grey.shade300,
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                type,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                  color: isSelected
+                                      ? const Color(0xFFE91E63)
+                                      : Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
 
@@ -827,7 +877,7 @@ class _AddPetPageState extends State<AddPetPage> {
                       const SizedBox(width: 12),
                       Text(
                         '품종 선택',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w500),
+                        style: TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -867,7 +917,7 @@ class _AddPetPageState extends State<AddPetPage> {
                           child: Center(
                             child: Text(
                               breed,
-                              style: GoogleFonts.inter(
+                              style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: isSelected
                                     ? FontWeight.w600
@@ -904,7 +954,7 @@ class _AddPetPageState extends State<AddPetPage> {
                       const SizedBox(width: 12),
                       Text(
                         'MBTI (옵션)',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w500),
+                        style: TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -944,7 +994,7 @@ class _AddPetPageState extends State<AddPetPage> {
                           child: Center(
                             child: Text(
                               mbti,
-                              style: GoogleFonts.inter(
+                              style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: isSelected
                                     ? FontWeight.w600
@@ -981,7 +1031,7 @@ class _AddPetPageState extends State<AddPetPage> {
                       const SizedBox(width: 12),
                       Text(
                         '혈액형 (옵션)',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w500),
+                        style: TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -1026,7 +1076,7 @@ class _AddPetPageState extends State<AddPetPage> {
                             child: Center(
                               child: Text(
                                 bloodType,
-                                style: GoogleFonts.inter(
+                                style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: isSelected
                                       ? FontWeight.w600
@@ -1073,7 +1123,7 @@ class _AddPetPageState extends State<AddPetPage> {
                               child: Center(
                                 child: Text(
                                   bloodType,
-                                  style: GoogleFonts.inter(
+                                  style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: isSelected
                                         ? FontWeight.w600
@@ -1113,8 +1163,8 @@ class _AddPetPageState extends State<AddPetPage> {
                             Icon(Icons.star, color: const Color(0xFFE91E63)),
                             const SizedBox(width: 12),
                             Text(
-                              '별자리: $_zodiacSign',
-                              style: GoogleFonts.inter(
+                              '$_zodiacSign',
+                              style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFFE91E63),
                               ),
@@ -1141,8 +1191,8 @@ class _AddPetPageState extends State<AddPetPage> {
                             Icon(Icons.pets, color: const Color(0xFFE91E63)),
                             const SizedBox(width: 12),
                             Text(
-                              '띠: $_chineseZodiac',
-                              style: GoogleFonts.inter(
+                              '$_chineseZodiac',
+                              style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFFE91E63),
                               ),

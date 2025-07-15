@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
@@ -49,7 +49,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         ),
         title: Text(
           '사용자 정보',
-          style: GoogleFonts.inter(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
             color: Colors.black,
@@ -69,7 +69,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   const SizedBox(width: 8),
                   Text(
                     '등록된 사용자',
-                    style: GoogleFonts.inter(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -108,11 +108,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       ),
                       title: Text(
                         user['name'],
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                        style: TextStyle(fontWeight: FontWeight.w600),
                       ),
                       subtitle: Text(
                         '${user['birthDate']} • ${user['zodiac']} • ${user['chineseZodiac']} • ${user['isMale'] ? '남' : '여'}${user['mbti'] != null ? ' • ${user['mbti']}' : ''}${user['bloodType'] != null ? ' • ${user['bloodType']}형' : ''}',
-                        style: GoogleFonts.inter(
+                        style: TextStyle(
                             fontSize: 12, color: Colors.grey.shade600),
                       ),
                       trailing: Row(
@@ -500,7 +500,7 @@ class _AddUserPageState extends State<AddUserPage> {
         ),
         title: Text(
           widget.editingUser != null ? '사용자 수정' : '새 사용자 추가',
-          style: GoogleFonts.inter(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
             color: Colors.black,
@@ -521,10 +521,11 @@ class _AddUserPageState extends State<AddUserPage> {
                     controller: _nameController,
                     decoration: InputDecoration(
                       labelText: '이름',
+                      labelStyle: TextStyle(fontSize: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      prefixIcon: Icon(Icons.person),
+                      // prefixIcon: Icon(Icons.person),
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                     ),
@@ -566,7 +567,7 @@ class _AddUserPageState extends State<AddUserPage> {
                           ),
                           child: Text(
                             '남성',
-                            style: GoogleFonts.inter(
+                            style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color:
@@ -595,7 +596,7 @@ class _AddUserPageState extends State<AddUserPage> {
                           ),
                           child: Text(
                             '여성',
-                            style: GoogleFonts.inter(
+                            style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color: !_isMale
@@ -617,16 +618,20 @@ class _AddUserPageState extends State<AddUserPage> {
               children: [
                 // 생년월일
                 Expanded(
-                  flex: 2,
+                  flex: 1,
                   child: TextFormField(
                     controller: _dateController,
                     decoration: InputDecoration(
                       labelText: '생년월일',
+                      labelStyle: TextStyle(fontSize: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      prefixIcon: Icon(Icons.calendar_today, size: 20),
+                      // prefixIcon: Icon(Icons.calendar_today, size: 18),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                     ),
+                    style: TextStyle(fontSize: 12),
                     onChanged: (value) {
                       _formatDate(value);
                     },
@@ -649,15 +654,15 @@ class _AddUserPageState extends State<AddUserPage> {
                     controller: _timeController,
                     decoration: InputDecoration(
                       labelText: '시간(옵션)',
-                      labelStyle: GoogleFonts.inter(fontSize: 12),
+                      labelStyle: TextStyle(fontSize: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      prefixIcon: Icon(Icons.access_time, size: 18),
+                      // prefixIcon: Icon(Icons.access_time, size: 16),
                       contentPadding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                          EdgeInsets.symmetric(horizontal: 6, vertical: 10),
                     ),
-                    style: GoogleFonts.inter(fontSize: 12),
+                    style: TextStyle(fontSize: 12),
                     onChanged: (value) {
                       _formatTime(value);
                     },
@@ -701,7 +706,7 @@ class _AddUserPageState extends State<AddUserPage> {
                           ),
                           child: Text(
                             '양력',
-                            style: GoogleFonts.inter(
+                            style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color: !_isLunar
@@ -731,7 +736,7 @@ class _AddUserPageState extends State<AddUserPage> {
                           ),
                           child: Text(
                             '음력',
-                            style: GoogleFonts.inter(
+                            style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color: _isLunar
@@ -764,7 +769,7 @@ class _AddUserPageState extends State<AddUserPage> {
                       const SizedBox(width: 12),
                       Text(
                         'MBTI (옵션)',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w500),
+                        style: TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -804,7 +809,7 @@ class _AddUserPageState extends State<AddUserPage> {
                           child: Center(
                             child: Text(
                               mbti,
-                              style: GoogleFonts.inter(
+                              style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: isSelected
                                     ? FontWeight.w600
@@ -841,7 +846,7 @@ class _AddUserPageState extends State<AddUserPage> {
                       const SizedBox(width: 12),
                       Text(
                         '혈액형 (옵션)',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w500),
+                        style: TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -876,7 +881,7 @@ class _AddUserPageState extends State<AddUserPage> {
                             child: Center(
                               child: Text(
                                 '${bloodType}형',
-                                style: GoogleFonts.inter(
+                                style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: isSelected
                                       ? FontWeight.w600
@@ -915,8 +920,8 @@ class _AddUserPageState extends State<AddUserPage> {
                             Icon(Icons.star, color: const Color(0xFFE91E63)),
                             const SizedBox(width: 12),
                             Text(
-                              '별자리: $_zodiacSign',
-                              style: GoogleFonts.inter(
+                              '$_zodiacSign',
+                              style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFFE91E63),
                               ),
@@ -943,8 +948,8 @@ class _AddUserPageState extends State<AddUserPage> {
                             Icon(Icons.pets, color: const Color(0xFFE91E63)),
                             const SizedBox(width: 12),
                             Text(
-                              '띠: $_chineseZodiac',
-                              style: GoogleFonts.inter(
+                              '$_chineseZodiac',
+                              style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFFE91E63),
                               ),

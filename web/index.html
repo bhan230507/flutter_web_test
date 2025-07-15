@@ -31,6 +31,22 @@
 
   <title>saju_flutter</title>
   <link rel="manifest" href="manifest.json">
+  
+  <script>
+    // GitHub Pages 배포를 위한 base href 동적 설정
+    (function() {
+      var baseHref = document.querySelector('base').getAttribute('href');
+      if (baseHref === '$FLUTTER_BASE_HREF') {
+        // GitHub Pages에서 실행 중인 경우
+        var pathSegments = window.location.pathname.split('/');
+        if (pathSegments.length > 2) {
+          // 리포지토리 이름이 URL에 포함된 경우
+          var repoName = pathSegments[1];
+          document.querySelector('base').setAttribute('href', '/' + repoName + '/');
+        }
+      }
+    })();
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
