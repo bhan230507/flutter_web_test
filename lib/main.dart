@@ -2,10 +2,21 @@ import 'package:flutter/material.dart';
 // import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:async';
-import 'user_profile_page.dart';
-import 'pet_profile_page.dart';
+import 'profile_user.dart';
+import 'profile_pet.dart';
+import 'nav_saju.dart';
+import 'nav_compatibility.dart';
+import 'nav_tarot.dart';
+import 'nav_mbti.dart';
+import 'nav_settings.dart';
+import 'nav_board.dart';
+import 'services/kakao_auth_service.dart';
+import 'globals.dart';
+import 'screens/signup_screen.dart';
 
 void main() {
+  // 카카오 SDK 초기화
+  KakaoAuthService.initializeKakaoSDK();
   runApp(const SajuApp());
 }
 
@@ -41,64 +52,33 @@ class MainHomePage extends StatefulWidget {
 
 class _MainHomePageState extends State<MainHomePage>
     with TickerProviderStateMixin {
-  late TabController _tabController;
+  bool _isInitialized = false;
+  late TabController _sajuTabController;
+  late TabController _compatibilityTabController;
+  late TabController _tarotTabController;
+  late TabController _mbtiTabController;
   int _currentTabIndex = 0;
 
   // 선택된 사용자와 애견 정보
   Map<String, dynamic>? _selectedUser;
   Map<String, dynamic>? _selectedPet;
 
-  final List<String> tabs = ['내사주', '개사주'];
-  final List<Map<String, dynamic>> chips = [
-    {'label': '출석체크', 'icon': Icons.check_circle_outline},
-    {'label': '정통사주', 'icon': Icons.auto_stories},
-    {'label': '신년운', 'icon': Icons.calendar_today},
-    {'label': '행운코디', 'icon': Icons.style},
-    {'label': '스포츠 운세', 'icon': Icons.sports_soccer},
-  ];
+  // 로그인된 사용자 정보 (전역 변수로 대체)
+  // Map<String, dynamic>? _loggedInUser;
+
   final List<Map<String, dynamic>> navItems = [
     {'label': '사주', 'icon': Icons.person_outline},
     {'label': '궁합', 'icon': Icons.favorite_border},
     {'label': '타로', 'icon': Icons.style},
+    {'label': 'MBTI', 'icon': Icons.psychology},
+    {'label': '게시판', 'icon': Icons.forum},
     {'label': '설정', 'icon': Icons.settings},
   ];
 
-  final List<Map<String, dynamic>> humanMenus = [
-    {
-      'icon': Icons.check_circle_outline,
-      'title': '출석체크',
-      'subtitle': '매일 출석하고 포인트 받기'
-    },
-    {'icon': Icons.auto_stories, 'title': '정통사주', 'subtitle': '사주풀이와 운세'},
-    {'icon': Icons.calendar_today, 'title': '신년운', 'subtitle': '2025년 신년운세'},
-    {'icon': Icons.style, 'title': '행운코디', 'subtitle': '오늘의 행운 아이템'},
-    {'icon': Icons.sports_soccer, 'title': '스포츠 운세', 'subtitle': '스포츠 관련 운세'},
-  ];
-  final List<Map<String, dynamic>> dogMenus = [
-    {'icon': Icons.pets, 'title': '반려견 운세', 'subtitle': '우리집 강아지 사주'},
-    {'icon': Icons.favorite, 'title': '건강운', 'subtitle': '반려견 건강 체크'},
-    {'icon': Icons.cake, 'title': '생일운', 'subtitle': '생일별 운세'},
-    {'icon': Icons.star, 'title': '성격풀이', 'subtitle': '반려견 성격 분석'},
-    {'icon': Icons.group, 'title': '궁합', 'subtitle': '반려견과 궁합보기'},
-    {'icon': Icons.school, 'title': '훈련운', 'subtitle': '훈련/교육 운세'},
-  ];
-
-  // 24시간 감정 데이터 샘플
-  final List<Map<String, dynamic>> emotionData = [
-    {'time': '00:00', 'energy': 0.3, 'calm': 0.7, 'stress': 0.2, 'label': '새벽'},
-    {'time': '03:00', 'energy': 0.1, 'calm': 0.8, 'stress': 0.3, 'label': ''},
-    {'time': '06:00', 'energy': 0.4, 'calm': 0.6, 'stress': 0.2, 'label': '아침'},
-    {'time': '09:00', 'energy': 0.8, 'calm': 0.3, 'stress': 0.4, 'label': ''},
-    {'time': '12:00', 'energy': 0.9, 'calm': 0.2, 'stress': 0.3, 'label': '점심'},
-    {'time': '15:00', 'energy': 0.7, 'calm': 0.4, 'stress': 0.5, 'label': ''},
-    {'time': '18:00', 'energy': 0.6, 'calm': 0.5, 'stress': 0.2, 'label': '저녁'},
-    {'time': '21:00', 'energy': 0.3, 'calm': 0.8, 'stress': 0.1, 'label': '밤'},
-  ];
-
   final List<String> noticeImages = [
-    'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80',
+    'assets/images/event1.jpg',
+    'assets/images/event2.jpg',
+    'assets/images/event3.jpg',
   ];
 
   final List<Map<String, String>> noticeTexts = [
@@ -113,10 +93,55 @@ class _MainHomePageState extends State<MainHomePage>
   @override
   void initState() {
     super.initState();
-    _tabController =
-        TabController(length: tabs.length, vsync: this, initialIndex: 1);
+    _sajuTabController = TabController(
+      length: 2, // 내사주, 개사주
+      vsync: this,
+      initialIndex: 1,
+    );
+    _compatibilityTabController = TabController(
+      length: 2, // 인간궁합, 반려동물궁합
+      vsync: this,
+      initialIndex: 0,
+    );
+    _tarotTabController = TabController(
+      length: 1, // 타로
+      vsync: this,
+      initialIndex: 0,
+    );
+    _mbtiTabController = TabController(
+      length: 2, // 내BTI, 개BTI
+      vsync: this,
+      initialIndex: 1, // 개BTI 탭이 먼저 활성화
+    );
     _pageController = PageController();
     _startAutoScroll();
+
+    // 토큰 유효성 확인
+    _checkTokenValidity();
+
+    // 로그인 상태 주기적 확인 시작
+    _startLoginStatusCheck();
+  }
+
+  Future<void> _checkTokenValidity() async {
+    await Globals.checkTokenValidity();
+    if (mounted) {
+      setState(() {
+        _isInitialized = true;
+      });
+    }
+  }
+
+  // 주기적으로 로그인 상태 확인
+  void _startLoginStatusCheck() {
+    Timer.periodic(const Duration(seconds: 2), (timer) {
+      if (mounted) {
+        Globals.checkTokenValidity();
+        setState(() {}); // UI 새로고침
+      } else {
+        timer.cancel();
+      }
+    });
   }
 
   void _startAutoScroll() {
@@ -133,9 +158,116 @@ class _MainHomePageState extends State<MainHomePage>
     });
   }
 
+  // 로그아웃 처리 (전역)
+  void _handleLogout() async {
+    try {
+      // 로그아웃 확인 다이얼로그
+      final shouldLogout = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('로그아웃'),
+            content: const Text('정말 로그아웃하시겠습니까?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('취소'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('로그아웃'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (shouldLogout == true) {
+        // 전역 로그아웃 처리
+        await Globals.logout();
+
+        // UI 상태 초기화
+        setState(() {
+          _selectedUser = null;
+          _selectedPet = null;
+        });
+
+        // 성공 메시지
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('로그아웃되었습니다.'),
+              backgroundColor: Colors.blue,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('로그아웃 실패: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  // 카카오 로그인 처리
+  void _handleKakaoLogin() async {
+    try {
+      final result = await KakaoAuthService.showKakaoLoginDialog(context);
+      if (result != null) {
+        // 새 사용자인지 확인
+        final isNewUser = result['user_info']['is_new_user'] ?? false;
+
+        if (isNewUser) {
+          // 새 사용자: 회원가입 화면으로 이동
+          final signupResult = await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => SignupScreen(
+                kakaoUserInfo: result['user_info'],
+                onSignupComplete: (updatedUserInfo) {
+                  // 회원가입 완료 후 로그인 처리
+                  final updatedResult = {
+                    ...result,
+                    'user_info': updatedUserInfo,
+                  };
+                  Globals.setLoggedInUser(updatedResult);
+                  setState(() {});
+                },
+              ),
+            ),
+          );
+        } else {
+          // 기존 사용자: 바로 로그인
+          Globals.setLoggedInUser(result);
+          setState(() {});
+
+          // 게시판 탭이 활성화되어 있다면 강제로 새로고침
+          if (_currentTabIndex == 4) {
+            setState(() {});
+          }
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('로그인 성공: ${result['user_info']['nickname']}'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('로그인 실패: $e'), backgroundColor: Colors.red),
+      );
+    }
+  }
+
   @override
   void dispose() {
-    _tabController.dispose();
+    _sajuTabController.dispose();
+    _compatibilityTabController.dispose();
+    _tarotTabController.dispose();
+    _mbtiTabController.dispose();
     _pageController.dispose();
     _carouselTimer?.cancel();
     super.dispose();
@@ -143,27 +275,37 @@ class _MainHomePageState extends State<MainHomePage>
 
   @override
   Widget build(BuildContext context) {
+    if (!_isInitialized) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
-      body: SafeArea(
-        child: _buildCurrentTabContent(),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentTabIndex,
-        onTap: (index) {
-          setState(() {
-            _currentTabIndex = index;
-          });
-        },
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFFE91E63),
-        unselectedItemColor: Colors.grey.shade400,
-        type: BottomNavigationBarType.fixed,
-        items: navItems
-            .map((item) => BottomNavigationBarItem(
+      body: SafeArea(child: _buildCurrentTabContent()),
+      bottomNavigationBar: Container(
+        height: 60,
+        child: BottomNavigationBar(
+          currentIndex: _currentTabIndex,
+          onTap: (index) {
+            setState(() {
+              _currentTabIndex = index;
+            });
+          },
+          backgroundColor: Colors.white,
+          selectedItemColor: const Color(0xFFE91E63),
+          unselectedItemColor: Colors.grey.shade400,
+          type: BottomNavigationBarType.fixed,
+          selectedFontSize: 11,
+          unselectedFontSize: 11,
+          iconSize: 20,
+          items: navItems
+              .map(
+                (item) => BottomNavigationBarItem(
                   icon: Icon(item['icon']),
                   label: item['label'],
-                ))
-            .toList(),
+                ),
+              )
+              .toList(),
+        ),
       ),
     );
   }
@@ -171,705 +313,114 @@ class _MainHomePageState extends State<MainHomePage>
   Widget _buildCurrentTabContent() {
     switch (_currentTabIndex) {
       case 0: // 사주
-        return _buildSajuTab();
+        return NavSaju.buildSajuTab(
+          context: context,
+          sajuTabController: _sajuTabController,
+          selectedUser: _selectedUser,
+          selectedPet: _selectedPet,
+          onUserSelected: (user) => setState(() => _selectedUser = user),
+          onPetSelected: (pet) => setState(() => _selectedPet = pet),
+          noticeImages: noticeImages,
+          noticeTexts: noticeTexts,
+          pageController: _pageController,
+          currentNotice: _currentNotice,
+          onPageChanged: (idx) => setState(() => _currentNotice = idx),
+          onScrollStart: () => _carouselTimer?.cancel(),
+          onScrollEnd: _startAutoScroll,
+          onKakaoLogin: _handleKakaoLogin,
+          onLogout: _handleLogout,
+        );
       case 1: // 궁합
-        return _buildCompatibilityTab();
+        return NavCompatibility.buildCompatibilityTab(
+          context: context,
+          compatibilityTabController: _compatibilityTabController,
+          selectedUser: _selectedUser,
+          selectedPet: _selectedPet,
+          onUserSelected: (user) => setState(() => _selectedUser = user),
+          onPetSelected: (pet) => setState(() => _selectedPet = pet),
+          noticeImages: noticeImages,
+          noticeTexts: noticeTexts,
+          pageController: _pageController,
+          currentNotice: _currentNotice,
+          onPageChanged: (idx) => setState(() => _currentNotice = idx),
+          onScrollStart: () => _carouselTimer?.cancel(),
+          onScrollEnd: _startAutoScroll,
+          onKakaoLogin: _handleKakaoLogin,
+          onLogout: _handleLogout,
+        );
       case 2: // 타로
-        return _buildTarotTab();
-      case 3: // 설정
-        return _buildSettingsTab();
+        return NavTarot.buildTarotTab(
+          context: context,
+          tarotTabController: _tarotTabController,
+          selectedUser: _selectedUser,
+          selectedPet: _selectedPet,
+          onUserSelected: (user) => setState(() => _selectedUser = user),
+          onPetSelected: (pet) => setState(() => _selectedPet = pet),
+          noticeImages: noticeImages,
+          noticeTexts: noticeTexts,
+          pageController: _pageController,
+          currentNotice: _currentNotice,
+          onPageChanged: (idx) => setState(() => _currentNotice = idx),
+          onScrollStart: () => _carouselTimer?.cancel(),
+          onScrollEnd: _startAutoScroll,
+          onKakaoLogin: _handleKakaoLogin,
+          onLogout: _handleLogout,
+        );
+      case 3: // MBTI
+        return NavMbti.buildMbtiTab(
+          context: context,
+          mbtiTabController: _mbtiTabController,
+          selectedUser: _selectedUser,
+          selectedPet: _selectedPet,
+          onUserSelected: (user) => setState(() => _selectedUser = user),
+          onPetSelected: (pet) => setState(() => _selectedPet = pet),
+          noticeImages: noticeImages,
+          noticeTexts: noticeTexts,
+          pageController: _pageController,
+          currentNotice: _currentNotice,
+          onPageChanged: (idx) => setState(() => _currentNotice = idx),
+          onScrollStart: () => _carouselTimer?.cancel(),
+          onScrollEnd: _startAutoScroll,
+          onKakaoLogin: _handleKakaoLogin,
+          onLogout: _handleLogout,
+        );
+      case 4: // 게시판
+        return NavBoard.buildBoardTab(
+          context: context,
+          selectedUser: _selectedUser,
+          selectedPet: _selectedPet,
+          onUserSelected: (user) => setState(() => _selectedUser = user),
+          onPetSelected: (pet) => setState(() => _selectedPet = pet),
+          noticeImages: noticeImages,
+          noticeTexts: noticeTexts,
+          pageController: _pageController,
+          currentNotice: _currentNotice,
+          onPageChanged: (idx) => setState(() => _currentNotice = idx),
+          onScrollStart: () => _carouselTimer?.cancel(),
+          onScrollEnd: _startAutoScroll,
+          onKakaoLogin: _handleKakaoLogin,
+          onLogout: _handleLogout,
+        );
+      case 5: // 설정
+        return NavSettings.buildSettingsTab();
       default:
-        return _buildSajuTab();
+        return NavSaju.buildSajuTab(
+          context: context,
+          sajuTabController: _sajuTabController,
+          selectedUser: _selectedUser,
+          selectedPet: _selectedPet,
+          onUserSelected: (user) => setState(() => _selectedUser = user),
+          onPetSelected: (pet) => setState(() => _selectedPet = pet),
+          noticeImages: noticeImages,
+          noticeTexts: noticeTexts,
+          pageController: _pageController,
+          currentNotice: _currentNotice,
+          onPageChanged: (idx) => setState(() => _currentNotice = idx),
+          onScrollStart: () => _carouselTimer?.cancel(),
+          onScrollEnd: _startAutoScroll,
+          onKakaoLogin: _handleKakaoLogin,
+          onLogout: _handleLogout,
+        );
     }
-  }
-
-  Widget _buildSajuTab() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Top right: small notification and profile icons
-        Padding(
-          padding: const EdgeInsets.only(top: 2, right: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GestureDetector(
-                onTap: () async {
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const UserProfilePage(),
-                    ),
-                  );
-                  // 결과 처리 (선택된 사용자 정보)
-                  if (result != null) {
-                    setState(() {
-                      _selectedUser = result;
-                    });
-                  }
-                },
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: _selectedUser != null
-                        ? const Color(0xFFE91E63).withOpacity(0.1)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.person, color: Colors.black87, size: 20),
-                      if (_selectedUser != null) ...[
-                        const SizedBox(width: 4),
-                        Text(
-                          _selectedUser!['name'],
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFFE91E63),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              GestureDetector(
-                onTap: () async {
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PetProfilePage(),
-                    ),
-                  );
-                  // 결과 처리 (선택된 애견 정보)
-                  if (result != null) {
-                    setState(() {
-                      _selectedPet = result;
-                    });
-                  }
-                },
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: _selectedPet != null
-                        ? const Color(0xFFE91E63).withOpacity(0.1)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.pets, color: Colors.black87, size: 20),
-                      if (_selectedPet != null) ...[
-                        const SizedBox(width: 4),
-                        Text(
-                          _selectedPet!['name'],
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFFE91E63),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        // Below: left-aligned large title
-        Padding(
-          padding: const EdgeInsets.only(left: 16, top: 2, bottom: 2),
-          child: Text('라이프코치',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
-        ),
-        // TabBar (truly flush left using TabBarTheme)
-        Theme(
-          data: Theme.of(context).copyWith(
-            tabBarTheme: const TabBarThemeData(
-              tabAlignment: TabAlignment.start,
-            ),
-          ),
-          child: SizedBox(
-            height: 44,
-            child: TabBar(
-              controller: _tabController,
-              isScrollable: true,
-              indicatorColor: const Color(0xFFE91E63),
-              labelColor: Colors.black,
-              unselectedLabelColor: Colors.grey.shade400,
-              labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              unselectedLabelStyle:
-                  TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-              tabs: tabs.map((t) => Tab(text: t)).toList(),
-            ),
-          ),
-        ),
-        // TabBarView (only the list changes)
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildNoticeCarousel(),
-                    _buildMenuGrid(humanMenus),
-                    _buildEmotionCurve(),
-                  ],
-                ),
-              ),
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildNoticeCarousel(),
-                    _buildMenuGrid(dogMenus),
-                    _buildEmotionCurve(),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCompatibilityTab() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
-          child: Text('궁합',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
-        ),
-        Expanded(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.favorite_border,
-                    size: 64, color: Colors.grey.shade400),
-                const SizedBox(height: 16),
-                Text('궁합 서비스 준비 중',
-                    style:
-                        TextStyle(fontSize: 18, color: Colors.grey.shade600)),
-                const SizedBox(height: 8),
-                Text('내궁합, 개궁합 서비스가 곧 제공됩니다',
-                    style:
-                        TextStyle(fontSize: 14, color: Colors.grey.shade500)),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTarotTab() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
-          child: Text('타로카드',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
-        ),
-        Expanded(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.style, size: 64, color: Colors.grey.shade400),
-                const SizedBox(height: 16),
-                Text('타로카드 서비스 준비 중',
-                    style:
-                        TextStyle(fontSize: 18, color: Colors.grey.shade600)),
-                const SizedBox(height: 8),
-                Text('타로카드 디자인과 액션이 준비 중입니다',
-                    style:
-                        TextStyle(fontSize: 14, color: Colors.grey.shade500)),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSettingsTab() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
-          child: Text('설정',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
-        ),
-        Expanded(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.settings, size: 64, color: Colors.grey.shade400),
-                const SizedBox(height: 16),
-                Text('설정 서비스 준비 중',
-                    style:
-                        TextStyle(fontSize: 18, color: Colors.grey.shade600)),
-                const SizedBox(height: 8),
-                Text('사용자 정보, 애견 정보 설정이 준비 중입니다',
-                    style:
-                        TextStyle(fontSize: 14, color: Colors.grey.shade500)),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNoticeCarousel() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: SizedBox(
-        height: 107,
-        child: Stack(
-          children: [
-            NotificationListener<ScrollNotification>(
-              onNotification: (notification) {
-                if (notification is ScrollStartNotification) {
-                  _carouselTimer?.cancel();
-                } else if (notification is ScrollEndNotification) {
-                  _startAutoScroll();
-                }
-                return false;
-              },
-              child: PageView.builder(
-                controller: _pageController,
-                physics: const BouncingScrollPhysics(),
-                itemCount: noticeImages.length,
-                onPageChanged: (idx) {
-                  setState(() {
-                    _currentNotice = idx;
-                  });
-                },
-                itemBuilder: (context, idx) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Stack(
-                      children: [
-                        Image.network(
-                          noticeImages[idx],
-                          width: double.infinity,
-                          height: 107,
-                          fit: BoxFit.cover,
-                        ),
-                        // 텍스트 오버레이
-                        Positioned(
-                          left: 16,
-                          bottom: 16,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color(0xFFE91E63).withOpacity(0.9),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  noticeTexts[idx]['badge']!,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                noticeTexts[idx]['title']!,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  shadows: [
-                                    Shadow(
-                                      offset: const Offset(0, 1),
-                                      blurRadius: 3,
-                                      color: Colors.black.withOpacity(0.5),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                noticeTexts[idx]['subtitle']!,
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.9),
-                                  fontSize: 12,
-                                  shadows: [
-                                    Shadow(
-                                      offset: const Offset(0, 1),
-                                      blurRadius: 2,
-                                      color: Colors.black.withOpacity(0.3),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 12,
-              child: IgnorePointer(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    noticeImages.length,
-                    (idx) => AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      margin: const EdgeInsets.symmetric(horizontal: 3),
-                      width: _currentNotice == idx ? 16 : 7,
-                      height: 7,
-                      decoration: BoxDecoration(
-                        color: _currentNotice == idx
-                            ? Colors.white.withOpacity(0.85)
-                            : Colors.white.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMenuGrid(List<Map<String, dynamic>> menus) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 3.0, // much shorter cards
-          crossAxisSpacing: 2,
-          mainAxisSpacing: 2,
-        ),
-        itemCount: menus.length,
-        itemBuilder: (context, index) {
-          final menu = menus[index];
-          return _buildMenuItem(menu);
-        },
-      ),
-    );
-  }
-
-  Widget _buildMenuItem(Map<String, dynamic> menu) {
-    return Container(
-      // No margin here
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade200, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.04),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(menu['icon'], color: const Color(0xFFE91E63), size: 22),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(menu['title'],
-                    style:
-                        TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                const SizedBox(height: 2),
-                Text(menu['subtitle'],
-                    style: TextStyle(fontSize: 11, color: Colors.grey),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmotionCurve() {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.trending_up, color: const Color(0xFFE91E63), size: 20),
-              const SizedBox(width: 8),
-              Text(
-                '오늘의 감정 곡선',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          // 감정 범례
-          Row(
-            children: [
-              _buildLegendItem('에너지', const Color(0xFF4CAF50)),
-              const SizedBox(width: 16),
-              _buildLegendItem('침착', const Color(0xFF2196F3)),
-              const SizedBox(width: 16),
-              _buildLegendItem('스트레스', const Color(0xFFFF5722)),
-            ],
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 120,
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: 0.25,
-                  getDrawingHorizontalLine: (value) {
-                    return FlLine(
-                      color: Colors.grey.shade100,
-                      strokeWidth: 0.5,
-                    );
-                  },
-                ),
-                titlesData: FlTitlesData(
-                  show: true,
-                  rightTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  topTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 25,
-                      interval: 1,
-                      getTitlesWidget: (double value, TitleMeta meta) {
-                        if (value.toInt() < emotionData.length &&
-                            emotionData[value.toInt()]['label']
-                                    ?.toString()
-                                    .isNotEmpty ==
-                                true) {
-                          return Text(
-                            emotionData[value.toInt()]['label'] ?? '',
-                            style: TextStyle(
-                              fontSize: 9,
-                              color: Colors.grey.shade500,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          );
-                        }
-                        return const Text('');
-                      },
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                ),
-                borderData: FlBorderData(
-                  show: false,
-                ),
-                minX: 0,
-                maxX: (emotionData.length - 1).toDouble(),
-                minY: 0,
-                maxY: 1,
-                lineBarsData: [
-                  // 에너지 라인
-                  LineChartBarData(
-                    spots: emotionData.asMap().entries.map((entry) {
-                      final value = entry.value['energy'] ?? 0.0;
-                      return FlSpot(entry.key.toDouble(), value);
-                    }).toList(),
-                    isCurved: true,
-                    color: const Color(0xFF4CAF50),
-                    barWidth: 1.5,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(
-                      show: true,
-                      getDotPainter: (spot, percent, barData, index) {
-                        // 라벨이 있는 시간대에만 도트 표시
-                        if (index < emotionData.length &&
-                            emotionData[index]['label']
-                                    ?.toString()
-                                    .isNotEmpty ==
-                                true) {
-                          return FlDotCirclePainter(
-                            radius: 1.5,
-                            color: const Color(0xFF4CAF50),
-                            strokeWidth: 1,
-                            strokeColor: Colors.white,
-                          );
-                        }
-                        return FlDotCirclePainter(
-                          radius: 0,
-                          color: Colors.transparent,
-                        );
-                      },
-                    ),
-                    belowBarData: BarAreaData(show: false),
-                  ),
-                  // 침착 라인
-                  LineChartBarData(
-                    spots: emotionData.asMap().entries.map((entry) {
-                      final value = entry.value['calm'] ?? 0.0;
-                      return FlSpot(entry.key.toDouble(), value);
-                    }).toList(),
-                    isCurved: true,
-                    color: const Color(0xFF2196F3),
-                    barWidth: 1.5,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(
-                      show: true,
-                      getDotPainter: (spot, percent, barData, index) {
-                        // 라벨이 있는 시간대에만 도트 표시
-                        if (index < emotionData.length &&
-                            emotionData[index]['label']
-                                    ?.toString()
-                                    .isNotEmpty ==
-                                true) {
-                          return FlDotCirclePainter(
-                            radius: 1.5,
-                            color: const Color(0xFF2196F3),
-                            strokeWidth: 1,
-                            strokeColor: Colors.white,
-                          );
-                        }
-                        return FlDotCirclePainter(
-                          radius: 0,
-                          color: Colors.transparent,
-                        );
-                      },
-                    ),
-                    belowBarData: BarAreaData(show: false),
-                  ),
-                  // 스트레스 라인
-                  LineChartBarData(
-                    spots: emotionData.asMap().entries.map((entry) {
-                      final value = entry.value['stress'] ?? 0.0;
-                      return FlSpot(entry.key.toDouble(), value);
-                    }).toList(),
-                    isCurved: true,
-                    color: const Color(0xFFFF5722),
-                    barWidth: 1.5,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(
-                      show: true,
-                      getDotPainter: (spot, percent, barData, index) {
-                        // 라벨이 있는 시간대에만 도트 표시
-                        if (index < emotionData.length &&
-                            emotionData[index]['label']
-                                    ?.toString()
-                                    .isNotEmpty ==
-                                true) {
-                          return FlDotCirclePainter(
-                            radius: 1.5,
-                            color: const Color(0xFFFF5722),
-                            strokeWidth: 1,
-                            strokeColor: Colors.white,
-                          );
-                        }
-                        return FlDotCirclePainter(
-                          radius: 0,
-                          color: Colors.transparent,
-                        );
-                      },
-                    ),
-                    belowBarData: BarAreaData(show: false),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLegendItem(String label, Color color) {
-    return Row(
-      children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey.shade700,
-          ),
-        ),
-      ],
-    );
   }
 }

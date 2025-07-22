@@ -1,41 +1,37 @@
 import 'package:flutter/material.dart';
 // import 'package:google_fonts/google_fonts.dart';
 
-class PetProfilePage extends StatefulWidget {
-  const PetProfilePage({super.key});
+class UserProfilePage extends StatefulWidget {
+  const UserProfilePage({super.key});
 
   @override
-  State<PetProfilePage> createState() => _PetProfilePageState();
+  State<UserProfilePage> createState() => _UserProfilePageState();
 }
 
-class _PetProfilePageState extends State<PetProfilePage> {
-  final List<Map<String, dynamic>> pets = [
+class _UserProfilePageState extends State<UserProfilePage> {
+  final List<Map<String, dynamic>> users = [
     {
-      'name': '멍멍이',
-      'type': '강아지',
-      'breed': '골든리트리버',
-      'birthDate': '2020-05-15',
-      'birthTime': '09:30',
+      'name': '김철수',
+      'birthDate': '1990-03-15',
+      'birthTime': '14:30',
       'isLunar': false,
       'isMale': true,
       'mbti': 'ENFP',
-      'bloodType': 'DEA 1.1+',
-      'zodiac': '황소자리',
-      'chineseZodiac': '쥐띠', // 2020년 = 쥐띠
+      'bloodType': 'A',
+      'zodiac': '물고기자리',
+      'chineseZodiac': '말띠',
       'isSelected': true,
     },
     {
-      'name': '냥냥이',
-      'type': '고양이',
-      'breed': '페르시안',
-      'birthDate': '2021-08-22',
+      'name': '이영희',
+      'birthDate': '1988-07-22',
       'birthTime': null,
       'isLunar': false,
       'isMale': false,
       'mbti': 'ISTJ',
-      'bloodType': 'A형',
+      'bloodType': 'O',
       'zodiac': '사자자리',
-      'chineseZodiac': '소띠', // 2021년 = 소띠
+      'chineseZodiac': '용띠',
       'isSelected': false,
     },
   ];
@@ -52,7 +48,7 @@ class _PetProfilePageState extends State<PetProfilePage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          '애견 정보',
+          '사용자 정보',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -63,39 +59,38 @@ class _PetProfilePageState extends State<PetProfilePage> {
       ),
       body: Column(
         children: [
-          // 기존 애견 목록
-          if (pets.isNotEmpty) ...[
+          // 기존 사용자 목록
+          if (users.isNotEmpty) ...[
             Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Icon(Icons.pets, color: const Color(0xFFE91E63), size: 20),
+                  Icon(Icons.person, color: const Color(0xFFE91E63), size: 20),
                   const SizedBox(width: 8),
                   Text(
-                    '등록된 애견',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                    '등록된 사용자',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ],
               ),
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: pets.length,
+                itemCount: users.length,
                 itemBuilder: (context, index) {
-                  final pet = pets[index];
+                  final user = users[index];
                   return Container(
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: pet['isSelected']
+                      color: user['isSelected']
                           ? const Color(0xFFE91E63).withOpacity(0.1)
                           : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: pet['isSelected']
+                        color: user['isSelected']
                             ? const Color(0xFFE91E63)
                             : Colors.grey.shade200,
                         width: 1,
@@ -103,42 +98,50 @@ class _PetProfilePageState extends State<PetProfilePage> {
                     ),
                     child: ListTile(
                       leading: CircleAvatar(
-                        backgroundColor:
-                            const Color(0xFFE91E63).withOpacity(0.1),
+                        backgroundColor: const Color(
+                          0xFFE91E63,
+                        ).withOpacity(0.1),
                         child: Icon(
-                          pet['type'] == '강아지' ? Icons.pets : Icons.pets,
+                          Icons.person,
                           color: const Color(0xFFE91E63),
                         ),
                       ),
                       title: Text(
-                        pet['name'],
+                        user['name'],
                         style: TextStyle(fontWeight: FontWeight.w600),
                       ),
                       subtitle: Text(
-                        '${pet['type']} • ${pet['breed']} • ${pet['birthDate']} • ${pet['isMale'] ? '수컷' : '암컷'}${pet['mbti'] != null ? ' • ${pet['mbti']}' : ''}${pet['bloodType'] != null ? ' • ${pet['bloodType']}' : ''}',
+                        '${user['birthDate']} • ${user['zodiac']} • ${user['chineseZodiac']} • ${user['isMale'] ? '남' : '여'}${user['mbti'] != null ? ' • ${user['mbti']}' : ''}${user['bloodType'] != null ? ' • ${user['bloodType']}형' : ''}',
                         style: TextStyle(
-                            fontSize: 12, color: Colors.grey.shade600),
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (pet['isSelected'])
-                            Icon(Icons.check_circle,
-                                color: const Color(0xFFE91E63)),
+                          if (user['isSelected'])
+                            Icon(
+                              Icons.check_circle,
+                              color: const Color(0xFFE91E63),
+                            ),
                           IconButton(
-                            icon: Icon(Icons.edit,
-                                color: Colors.grey.shade600, size: 20),
+                            icon: Icon(
+                              Icons.edit,
+                              color: Colors.grey.shade600,
+                              size: 20,
+                            ),
                             onPressed: () async {
                               final result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      AddPetPage(editingPet: pet),
+                                      AddUserPage(editingUser: user),
                                 ),
                               );
                               if (result != null) {
                                 setState(() {
-                                  pets[index] = result;
+                                  users[index] = result;
                                 });
                               }
                             },
@@ -147,12 +150,12 @@ class _PetProfilePageState extends State<PetProfilePage> {
                       ),
                       onTap: () {
                         setState(() {
-                          for (var p in pets) {
-                            p['isSelected'] = false;
+                          for (var u in users) {
+                            u['isSelected'] = false;
                           }
-                          pet['isSelected'] = true;
+                          user['isSelected'] = true;
                         });
-                        Navigator.pop(context, pet);
+                        Navigator.pop(context, user);
                       },
                     ),
                   );
@@ -160,7 +163,7 @@ class _PetProfilePageState extends State<PetProfilePage> {
               ),
             ),
           ],
-          // 새 애견 추가 버튼
+          // 새 사용자 추가 버튼
           Container(
             padding: const EdgeInsets.all(16),
             child: SizedBox(
@@ -170,17 +173,17 @@ class _PetProfilePageState extends State<PetProfilePage> {
                   final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AddPetPage(),
+                      builder: (context) => const AddUserPage(),
                     ),
                   );
                   if (result != null) {
                     setState(() {
-                      pets.add(result);
+                      users.add(result);
                     });
                   }
                 },
                 icon: Icon(Icons.add),
-                label: Text('새 애견 추가'),
+                label: Text('새 사용자 추가'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFE91E63),
                   foregroundColor: Colors.white,
@@ -198,24 +201,22 @@ class _PetProfilePageState extends State<PetProfilePage> {
   }
 }
 
-class AddPetPage extends StatefulWidget {
-  final Map<String, dynamic>? editingPet;
+class AddUserPage extends StatefulWidget {
+  final Map<String, dynamic>? editingUser;
 
-  const AddPetPage({super.key, this.editingPet});
+  const AddUserPage({super.key, this.editingUser});
 
   @override
-  State<AddPetPage> createState() => _AddPetPageState();
+  State<AddUserPage> createState() => _AddUserPageState();
 }
 
-class _AddPetPageState extends State<AddPetPage> {
+class _AddUserPageState extends State<AddUserPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
-  String _selectedType = '강아지';
-  String? _selectedBreed;
   bool _isLunar = false;
-  bool _isMale = true; // 수컷/암컷 토글 추가
+  bool _isMale = true; // 남녀 토글 추가
   String? _zodiacSign;
   String? _chineseZodiac;
   String? _selectedMbti; // MBTI 선택
@@ -238,86 +239,53 @@ class _AddPetPageState extends State<AddPetPage> {
     'ESTJ',
     'ESFJ',
     'ENFJ',
-    'ENTJ'
+    'ENTJ',
   ];
 
-  // 혈액형 옵션들 (애완동물용)
-  List<String> get bloodTypeOptions {
-    if (_selectedType == '강아지') {
-      return [
-        'DEA 1.1+',
-        'DEA 1.1-',
-        'DEA 1.2',
-        'DEA 3',
-        'DEA 4',
-        'DEA 5',
-        'DEA 6',
-        'DEA 7',
-        'DEA 8'
-      ];
-    } else {
-      return ['A형', 'B형', 'AB형'];
-    }
-  }
+  // 혈액형 옵션들
+  final List<String> bloodTypeOptions = ['A', 'B', 'O', 'AB'];
 
-  final Map<String, List<String>> breeds = {
-    '강아지': [
-      '골든리트리버',
-      '래브라도리트리버',
-      '진돗개',
-      '말티즈',
-      '푸들',
-      '치와와',
-      '포메라니안',
-      '시바견',
-      '허스키',
-      '불독',
-      '비글',
-      '달마시안',
-      '세인트버나드',
-      '버니즈마운틴독',
-      '콜리',
-      '보더콜리',
-      '시베리안허스키'
-    ],
-    '고양이': [
-      '페르시안',
-      '샴',
-      '러시안블루',
-      '메인쿤',
-      '뱅갈',
-      '스핑크스',
-      '브리티시숏헤어',
-      '아메리칸숏헤어',
-      '터키시앙고라',
-      '노르웨이숏포레스트',
-      '스코티시폴드',
-      '먼치킨',
-      '라가머핀',
-      '이집션마우',
-      '아비시니안'
-    ],
+  final Map<String, String> zodiacSigns = {
+    '물고기자리': '2월 19일 - 3월 20일',
+    '양자리': '3월 21일 - 4월 19일',
+    '황소자리': '4월 20일 - 5월 20일',
+    '쌍둥이자리': '5월 21일 - 6월 21일',
+    '게자리': '6월 22일 - 7월 22일',
+    '사자자리': '7월 23일 - 8월 22일',
+    '처녀자리': '8월 23일 - 9월 22일',
+    '천칭자리': '9월 23일 - 10월 22일',
+    '전갈자리': '10월 23일 - 11월 21일',
+    '사수자리': '11월 22일 - 12월 21일',
+    '염소자리': '12월 22일 - 1월 19일',
+    '물병자리': '1월 20일 - 2월 18일',
   };
 
-  List<String> get sortedBreeds {
-    final breedList = breeds[_selectedType] ?? [];
-    breedList.sort(); // 내림차순 정렬
-    return breedList;
-  }
+  final Map<String, String> chineseZodiacs = {
+    '쥐띠': '2020, 2008, 1996, 1984, 1972, 1960',
+    '소띠': '2021, 2009, 1997, 1985, 1973, 1961',
+    '호랑이띠': '2022, 2010, 1998, 1986, 1974, 1962',
+    '토끼띠': '2023, 2011, 1999, 1987, 1975, 1963',
+    '용띠': '2024, 2012, 2000, 1988, 1976, 1964',
+    '뱀띠': '2025, 2013, 2001, 1989, 1977, 1965',
+    '말띠': '2026, 2014, 2002, 1990, 1978, 1966',
+    '양띠': '2027, 2015, 2003, 1991, 1979, 1967',
+    '원숭이띠': '2028, 2016, 2004, 1992, 1980, 1968',
+    '닭띠': '2029, 2017, 2005, 1993, 1981, 1969',
+    '개띠': '2030, 2018, 2006, 1994, 1982, 1970',
+    '돼지띠': '2031, 2019, 2007, 1995, 1983, 1971',
+  };
 
   @override
   void initState() {
     super.initState();
-    if (widget.editingPet != null) {
-      _nameController.text = widget.editingPet!['name'];
-      _selectedType = widget.editingPet!['type'];
-      _selectedBreed = widget.editingPet!['breed'];
-      _dateController.text = widget.editingPet!['birthDate'];
-      _timeController.text = widget.editingPet!['birthTime'] ?? '';
-      _isLunar = widget.editingPet!['isLunar'] ?? false;
-      _isMale = widget.editingPet!['isMale'] ?? true; // 수컷/암컷 정보 추가
-      _selectedMbti = widget.editingPet!['mbti']; // MBTI 정보 추가
-      _selectedBloodType = widget.editingPet!['bloodType']; // 혈액형 정보 추가
+    if (widget.editingUser != null) {
+      _nameController.text = widget.editingUser!['name'];
+      _dateController.text = widget.editingUser!['birthDate'];
+      _timeController.text = widget.editingUser!['birthTime'] ?? '';
+      _isLunar = widget.editingUser!['isLunar'] ?? false;
+      _isMale = widget.editingUser!['isMale'] ?? true; // 남녀 정보 추가
+      _selectedMbti = widget.editingUser!['mbti']; // MBTI 정보 추가
+      _selectedBloodType = widget.editingUser!['bloodType']; // 혈액형 정보 추가
       _calculateZodiacSigns(_dateController.text);
     }
   }
@@ -439,7 +407,7 @@ class _AddPetPageState extends State<AddPetPage> {
           '원숭이띠',
           '닭띠',
           '개띠',
-          '돼지띠'
+          '돼지띠',
         ];
 
         // 2020년이 쥐띠이므로 기준으로 계산
@@ -464,7 +432,7 @@ class _AddPetPageState extends State<AddPetPage> {
       final month = int.parse(parts[1]);
       final day = int.parse(parts[2]);
 
-      if (year < 2000 || year > DateTime.now().year) return false;
+      if (year < 1900 || year > DateTime.now().year) return false;
       if (month < 1 || month > 12) return false;
       if (day < 1 || day > 31) return false;
 
@@ -538,7 +506,7 @@ class _AddPetPageState extends State<AddPetPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          widget.editingPet != null ? '애견 수정' : '새 애견 추가',
+          widget.editingUser != null ? '사용자 수정' : '새 사용자 추가',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -552,30 +520,34 @@ class _AddPetPageState extends State<AddPetPage> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // 이름 입력과 수컷/암컷 토글
+            // 이름 입력과 남녀 토글
             Row(
               children: [
                 Expanded(
                   child: TextFormField(
                     controller: _nameController,
                     decoration: InputDecoration(
-                      labelText: '애견 이름',
+                      labelText: '이름',
                       labelStyle: TextStyle(fontSize: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      // prefixIcon: Icon(Icons.pets),
+                      // prefixIcon: Icon(Icons.person),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 16,
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return '애견 이름을 입력해주세요';
+                        return '이름을 입력해주세요';
                       }
                       return null;
                     },
                   ),
                 ),
                 const SizedBox(width: 8),
-                // 수컷/암컷 토글
+                // 남녀 토글 (양력/음력 토글과 같은 크기로 조정)
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade300),
@@ -592,10 +564,13 @@ class _AddPetPageState extends State<AddPetPage> {
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 16),
+                            horizontal: 8,
+                            vertical: 16,
+                          ),
                           decoration: BoxDecoration(
                             color: _isMale
-                                ? Colors.blue // 수컷은 파란색
+                                ? Colors
+                                      .blue // 남성은 파란색
                                 : Colors.transparent,
                             borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(12),
@@ -603,12 +578,13 @@ class _AddPetPageState extends State<AddPetPage> {
                             ),
                           ),
                           child: Text(
-                            '수컷',
+                            '남성',
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
-                              color:
-                                  _isMale ? Colors.white : Colors.grey.shade600,
+                              color: _isMale
+                                  ? Colors.white
+                                  : Colors.grey.shade600,
                             ),
                           ),
                         ),
@@ -621,7 +597,9 @@ class _AddPetPageState extends State<AddPetPage> {
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 16),
+                            horizontal: 8,
+                            vertical: 16,
+                          ),
                           decoration: BoxDecoration(
                             color: !_isMale
                                 ? const Color(0xFFE91E63)
@@ -632,7 +610,7 @@ class _AddPetPageState extends State<AddPetPage> {
                             ),
                           ),
                           child: Text(
-                            '암컷',
+                            '여성',
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
@@ -665,8 +643,10 @@ class _AddPetPageState extends State<AddPetPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       // prefixIcon: Icon(Icons.calendar_today, size: 18),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 12,
+                      ),
                     ),
                     style: TextStyle(fontSize: 12),
                     onChanged: (value) {
@@ -696,8 +676,10 @@ class _AddPetPageState extends State<AddPetPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       // prefixIcon: Icon(Icons.access_time, size: 16),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 10,
+                      ),
                     ),
                     style: TextStyle(fontSize: 12),
                     onChanged: (value) {
@@ -731,7 +713,9 @@ class _AddPetPageState extends State<AddPetPage> {
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 16),
+                            horizontal: 8,
+                            vertical: 16,
+                          ),
                           decoration: BoxDecoration(
                             color: !_isLunar
                                 ? const Color(0xFFE91E63) // 양력은 현재 색상 유지
@@ -761,10 +745,13 @@ class _AddPetPageState extends State<AddPetPage> {
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 16),
+                            horizontal: 8,
+                            vertical: 16,
+                          ),
                           decoration: BoxDecoration(
                             color: _isLunar
-                                ? Colors.blue // 음력은 파란색
+                                ? Colors
+                                      .blue // 음력은 파란색
                                 : Colors.transparent,
                             borderRadius: const BorderRadius.only(
                               topRight: Radius.circular(12),
@@ -787,154 +774,6 @@ class _AddPetPageState extends State<AddPetPage> {
                   ),
                 ),
               ],
-            ),
-            const SizedBox(height: 16),
-
-            // 종류 선택 (강아지/고양이)
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.pets, color: Colors.grey.shade600),
-                      const SizedBox(width: 12),
-                      Text(
-                        '종류 선택',
-                        style: TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: ['강아지', '고양이'].map((String type) {
-                      final isSelected = _selectedType == type;
-                      return Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selectedType = type;
-                              _selectedBreed = null; // 품종 초기화
-                              _selectedBloodType = null; // 혈액형 초기화
-                            });
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? const Color(0xFFE91E63).withOpacity(0.1)
-                                  : Colors.grey.shade50,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: isSelected
-                                    ? const Color(0xFFE91E63)
-                                    : Colors.grey.shade300,
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                type,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: isSelected
-                                      ? FontWeight.w600
-                                      : FontWeight.normal,
-                                  color: isSelected
-                                      ? const Color(0xFFE91E63)
-                                      : Colors.black87,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // 품종 선택 (3열 그리드)
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.category, color: Colors.grey.shade600),
-                      const SizedBox(width: 12),
-                      Text(
-                        '품종 선택',
-                        style: TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      childAspectRatio: 3.5, // 높이 줄임 (2.5 → 3.5)
-                      crossAxisSpacing: 6,
-                      mainAxisSpacing: 6,
-                    ),
-                    itemCount: sortedBreeds.length,
-                    itemBuilder: (context, index) {
-                      final breed = sortedBreeds[index];
-                      final isSelected = _selectedBreed == breed;
-                      return InkWell(
-                        onTap: () {
-                          setState(() {
-                            _selectedBreed = breed;
-                          });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? const Color(0xFFE91E63).withOpacity(0.1)
-                                : Colors.grey.shade50,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: isSelected
-                                  ? const Color(0xFFE91E63)
-                                  : Colors.grey.shade300,
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              breed,
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.normal,
-                                color: isSelected
-                                    ? const Color(0xFFE91E63)
-                                    : Colors.black87,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
             ),
             const SizedBox(height: 16),
 
@@ -964,11 +803,11 @@ class _AddPetPageState extends State<AddPetPage> {
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      childAspectRatio: 3.5, // 높이 줄임 (2.0 → 3.5)
-                      crossAxisSpacing: 6,
-                      mainAxisSpacing: 6,
-                    ),
+                          crossAxisCount: 4,
+                          childAspectRatio: 2.5, // 높이 늘림 (3.5 → 2.5)
+                          crossAxisSpacing: 6,
+                          mainAxisSpacing: 6,
+                        ),
                     itemCount: mbtiOptions.length,
                     itemBuilder: (context, index) {
                       final mbti = mbtiOptions[index];
@@ -1036,32 +875,22 @@ class _AddPetPageState extends State<AddPetPage> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  // 강아지인 경우 3x3 그리드, 고양이인 경우 가로 배치
-                  if (_selectedType == '강아지') ...[
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        childAspectRatio: 3.5, // 높이 줄임 (2.5 → 3.5)
-                        crossAxisSpacing: 6,
-                        mainAxisSpacing: 6,
-                      ),
-                      itemCount: bloodTypeOptions.length,
-                      itemBuilder: (context, index) {
-                        final bloodType = bloodTypeOptions[index];
-                        final isSelected = _selectedBloodType == bloodType;
-                        return InkWell(
+                  Row(
+                    children: bloodTypeOptions.map((bloodType) {
+                      final isSelected = _selectedBloodType == bloodType;
+                      return Expanded(
+                        child: GestureDetector(
                           onTap: () {
                             setState(() {
                               _selectedBloodType =
                                   _selectedBloodType == bloodType
-                                      ? null
-                                      : bloodType;
+                                  ? null
+                                  : bloodType;
                             });
                           },
                           child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? const Color(0xFFE91E63).withOpacity(0.1)
@@ -1075,9 +904,9 @@ class _AddPetPageState extends State<AddPetPage> {
                             ),
                             child: Center(
                               child: Text(
-                                bloodType,
+                                '${bloodType}형',
                                 style: TextStyle(
-                                  fontSize: 10,
+                                  fontSize: 14,
                                   fontWeight: isSelected
                                       ? FontWeight.w600
                                       : FontWeight.normal,
@@ -1085,61 +914,13 @@ class _AddPetPageState extends State<AddPetPage> {
                                       ? const Color(0xFFE91E63)
                                       : Colors.black87,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
-                        );
-                      },
-                    ),
-                  ] else ...[
-                    Row(
-                      children: bloodTypeOptions.map((bloodType) {
-                        final isSelected = _selectedBloodType == bloodType;
-                        return Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _selectedBloodType =
-                                    _selectedBloodType == bloodType
-                                        ? null
-                                        : bloodType;
-                              });
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 4),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? const Color(0xFFE91E63).withOpacity(0.1)
-                                    : Colors.grey.shade50,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: isSelected
-                                      ? const Color(0xFFE91E63)
-                                      : Colors.grey.shade300,
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  bloodType,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: isSelected
-                                        ? FontWeight.w600
-                                        : FontWeight.normal,
-                                    color: isSelected
-                                        ? const Color(0xFFE91E63)
-                                        : Colors.black87,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ],
               ),
             ),
@@ -1212,25 +993,22 @@ class _AddPetPageState extends State<AddPetPage> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  if (_formKey.currentState!.validate() &&
-                      _selectedBreed != null) {
-                    final newPet = {
+                  if (_formKey.currentState!.validate()) {
+                    final newUser = {
                       'name': _nameController.text,
-                      'type': _selectedType,
-                      'breed': _selectedBreed,
                       'birthDate': _dateController.text,
                       'birthTime': _timeController.text.isNotEmpty
                           ? _timeController.text
                           : null,
                       'isLunar': _isLunar,
-                      'isMale': _isMale, // 수컷/암컷 정보 추가
+                      'isMale': _isMale, // 남녀 정보 추가
                       'mbti': _selectedMbti, // MBTI 정보 추가
                       'bloodType': _selectedBloodType, // 혈액형 정보 추가
                       'zodiac': _zodiacSign,
                       'chineseZodiac': _chineseZodiac,
                       'isSelected': false,
                     };
-                    Navigator.pop(context, newPet);
+                    Navigator.pop(context, newUser);
                   }
                 },
                 style: ElevatedButton.styleFrom(
